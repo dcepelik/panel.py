@@ -160,6 +160,7 @@ with Popen(['dzen2'] + dzen2_opts, stdin=PIPE, stdout=PIPE) as dzen2:
             windows = load_windows()
         elif event['name'] == 'status_changed':
             status = event['status']
+            tag_statuses = load_tags() # for alerts
             windows = load_windows()
         else:
             continue
