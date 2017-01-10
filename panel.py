@@ -36,7 +36,11 @@ bg_selected = hc(['get', 'window_border_active_color'])
 bg_fade = bg_normal
 bg_urgent = '#FF0657'
 
-panel_x, panel_y, panel_width, panel_height = map(int, hc(['monitor_rect', '0']).split(' '))
+geom_x, geom_y, geom_width, geom_height = map(int, hc(['monitor_rect', '0']).split(' '))
+panel_height = 16
+panel_width = geom_width
+
+hc(['pad', '0', str(panel_height)])
 
 events = Queue()
 status_check_delay = 3
@@ -144,6 +148,8 @@ status_thread.daemon = True
 herbst_thread.start()
 status_thread.start()
 
+winID_re = re.compile('0x[0-9a-fA-F]+', re.MULTILINE)
+
 with Popen(['dzen2'] + dzen2_opts, stdin=PIPE, stdout=PIPE) as dzen2:
     tag_statuses = load_tags()
     windows = load_windows()
@@ -174,7 +180,7 @@ with Popen(['dzen2'] + dzen2_opts, stdin=PIPE, stdout=PIPE) as dzen2:
             
             apps = set()
 
-            for winID in re.findall('0x[0-9a-fA-F]+', layout, re.MULTILINE):
+            for winID in re.findall(winID_re, layout):
                 try:
                     win = windows[winID]
 
