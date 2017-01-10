@@ -33,5 +33,7 @@ This is a new thing, so:
   
 ## Screenshots
 
-![herbstluftwm running panel.py: tag names](tags.png)
-![herbstluftwm running panel.py: status text](status.png)
+<p style="text-align: center">
+	<img alt="panel.py's tags" src="tags.png" />
+	<img alt="panel.py's status text (customizable in code)" src="status.png" />
+</p>

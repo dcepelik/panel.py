@@ -39,7 +39,7 @@ bg_urgent = '#FF0657'
 panel_x, panel_y, panel_width, panel_height = map(int, hc(['monitor_rect', '0']).split(' '))
 
 events = Queue()
-status_check_delay = 1
+status_check_delay = 3
 
 def herbst_events():
     with Popen(['herbstclient', '-i'], stdout=PIPE) as herbstclient:
