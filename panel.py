@@ -80,7 +80,7 @@ def status_events():
             ))
 
         now = datetime.datetime.now()
-        status.append('{}{}{}.{}.{} {}{}:{}:{}'.format(
+        status.append('{}{}{}.{}.{} {}{}:{}'.format(
             colors(fg_normal, bg_normal),
             now.day,
             colors(fg_fade, bg_fade),
@@ -88,8 +88,7 @@ def status_events():
             now.year,
             colors(fg_normal, bg_normal),
             now.hour,
-            now.minute,
-            now.second
+            now.minute
         ))
 
         events.put({
@@ -153,12 +152,15 @@ with Popen(['dzen2'] + dzen2_opts, stdin=PIPE, stdout=PIPE) as dzen2:
     while True:
         event = events.get()
 
+        print(event['name'])
+
         if event['name'] == 'tag_changed':
             tag_statuses = load_tags()
         elif event['name'] == 'window_title_changed':
             windows = load_windows()
         elif event['name'] == 'status_changed':
             status = event['status']
+            windows = load_windows()
         else:
             continue
 
@@ -185,6 +187,11 @@ with Popen(['dzen2'] + dzen2_opts, stdin=PIPE, stdout=PIPE) as dzen2:
                         for piece in pieces:
                             if re.match('^\w+$', piece):
                                 app_name = piece.lower().strip()
+
+                                # skip 'sudo'
+                                if app_name == 'sudo':
+                                    continue
+
                                 break
 
                         # get edited file name (requires 'set title')
@@ -192,6 +199,7 @@ with Popen(['dzen2'] + dzen2_opts, stdin=PIPE, stdout=PIPE) as dzen2:
                             match = re.match('^([^\(]*) \(.*\) - VIM$', win['title'].replace('\"', ''))
                             if match:
                                 app_name = '[{}]'.format(match.group(1))
+
                     else:
                         app_name = windows[winID]['class'].lower().strip()
 
