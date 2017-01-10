@@ -13,6 +13,7 @@ you'll get tags called after the file you currently edit with *vim*!
 
   * Simpler workspace navigation, especially for programming
       * You don't have to remember which tag has that `helloworld.c` file open--you just see it.
+  * No need to give your tags names, no need being careful where you open your windows
   * Visual reminder of long running tasks and when they terminate
       * So when you run `sudo pacman -Syu` in tag 6, the tag name is called `pacman` unless the upgrade is done
       * Or when you `cp -r` a lot of files, that `cp` will hang there as long as it's actually busy
@@ -32,4 +33,5 @@ This is a new thing, so:
   
 ## Screenshots
 
-![herbstluftwm running panel.py](screen.png)
+![herbstluftwm running panel.py: tag names](tags.png)
+![herbstluftwm running panel.py: status text](status.png)
