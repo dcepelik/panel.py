@@ -154,16 +154,13 @@ with Popen(['dzen2'] + dzen2_opts, stdin=PIPE, stdout=PIPE) as dzen2:
 
         print(event['name'])
 
-        if event['name'] == 'tag_changed':
-            tag_statuses = load_tags()
-        elif event['name'] == 'window_title_changed':
+        tag_statuses = load_tags() # for alerts
+
+        if event['name'] == 'window_title_changed':
             windows = load_windows()
         elif event['name'] == 'status_changed':
             status = event['status']
-            tag_statuses = load_tags() # for alerts
             windows = load_windows()
-        else:
-            continue
 
         tags = []
 
