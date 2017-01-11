@@ -33,7 +33,7 @@ This is a new thing, so:
   
 ## Screenshots
 
-<p style="text-align: center">
+<p align="center">
 	<img alt="panel.py's tags" src="tags.png" />
 	<img alt="panel.py's status text (customizable in code)" src="status.png" />
 </p>

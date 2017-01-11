@@ -1,231 +1,97 @@
-#!/usr/bin/env python3
-
-from subprocess import check_output, Popen, PIPE
+from widgets.stretcher import StretcherWidget
+from threading import Event
+from subprocess import Popen, PIPE
+from util import hc
+import sys
 import re
-import datetime
-from time import sleep
-from threading import Thread
-from queue import Queue
-
-
-def cmd(cmd):
-    return check_output(cmd).strip().decode('utf-8')
-
-
-def shellcmd(cmd):
-    return check_output(cmd, shell=True).strip().decode('utf-8')
-
-
-def hc(cmds):
-    return check_output(['herbstclient'] + cmds).strip().decode('utf-8')
-
 
 font = "-*-Bitstream Vera Sans Mono-*-*-*-*-11-*-*-*-*-*-*-*"                                        
-dzen2_opts = [
-    '-fn', font,
-    '-ta', 'l'
-]
+dzen2_opts = [ '-fn', font, '-ta', 'l' ]
 
-fg_normal = '#efefef'
-fg_selected = '#000000'
-fg_fade = '#888888'
-fg_urgent = fg_selected
+class Panel:
+    
+    def __init__(self):
+        self.widgets = []
+        self.invalid = Event()
+        self.load_styles()
 
-bg_normal = '#000000' #hc(['get', 'window_border_normal_color'])
-bg_selected = hc(['get', 'window_border_active_color'])
-bg_fade = bg_normal
-bg_urgent = '#FF0657'
+    def load_styles(self):
+        self.styles = {
+            'normal': {
+                'fg': '#efefef',
+                'bg': '#000000',
+            },
 
-geom_x, geom_y, geom_width, geom_height = map(int, hc(['monitor_rect', '0']).split(' '))
-panel_height = 16
-panel_width = geom_width
+            'active': {
+                'fg': '#000000',
+                'bg': hc('get', 'window_border_active_color'),
+            },
 
-hc(['pad', '0', str(panel_height)])
+            'inactive': {
+                'fg': '#888888',
+                'bg': '#000000',
+            },
 
-events = Queue()
-status_check_delay = 3
-
-def herbst_events():
-    with Popen(['herbstclient', '-i'], stdout=PIPE) as herbstclient:
-        for line in herbstclient.stdout:
-            events.put({
-                'name': line.decode().split('\t')[0]
-            })
-
-
-def status_events():
-    while True:
-        status = []
-
-        net_name, net_if = shellcmd('nmcli --terse --fields "name,device" connection show --active').split(':')
-        status.append('{}{}{}@{}'.format(
-            colors(fg_normal, bg_normal),
-            net_name,
-            colors(fg_fade, bg_fade),
-            net_if
-        ))
-
-        total_mem, free_mem = shellcmd("free -h --mebi | tail -n+2 | head -n1 | tr -s $' ' | cut -d' ' -f2,3").split(' ')
-        status.append('{}{}{} / {}'.format(
-            colors(fg_normal, bg_normal),
-            free_mem,
-            colors(fg_fade, bg_fade),
-            total_mem
-        ))
-
-        battery = shellcmd("acpi -b | head -n1 | cut -d' ' -f4,5").split(', ')
-        if len(battery) == 2:
-            percent, time = battery
-            status.append('{}{}{} ({})'.format(
-                colors(fg_normal, bg_normal),
-                percent,
-                colors(fg_fade, bg_fade),
-                time
-            ))
-
-        now = datetime.datetime.now()
-        status.append('{}{}{}.{}.{} {}{}:{}'.format(
-            colors(fg_normal, bg_normal),
-            now.day,
-            colors(fg_fade, bg_fade),
-            now.month,
-            now.year,
-            colors(fg_normal, bg_normal),
-            '{:02d}'.format(now.hour),
-            '{:02d}'.format(now.minute)
-        ))
-
-        events.put({
-            'name': 'status_changed',
-            'status':  '   '.join(status)
-        })
-        sleep(status_check_delay)
-
-
-def colors(fg, bg):
-    return '^fg({})^bg({})'.format(fg, bg)
-
-
-def load_tags():
-    return str.split(hc(['tag_status']), '\t')
-
-
-def get_attr(attrs, name):
-    for attr in attrs:
-        if name in attr:
-            return attr.split('=')[1].strip()
-
-def load_windows():
-    windows = dict()
-
-    clients = hc(['attr', 'clients']).split('\n')
-    num_clients = int(clients[0].split(' ')[0])
-
-    for winID in clients[1:num_clients + 1]:
-        winID = winID.strip()[:-1]
-        attrs = hc(['attr', 'clients.{}.'.format(winID.strip())]).split('\n')
-
-        windows[winID] = {
-            'title': get_attr(attrs, 'title'),
-            'class': get_attr(attrs, 'class'),
-            'instance': get_attr(attrs, 'instance'),
-            'pid': get_attr(attrs, 'pid')
+            'urgent': {
+                'fg': '#000000',
+                'fg': '#ff0657',
+            }
         }
 
-    return windows
+    def invalidate(self, widget):
+        self.invalid.set()
 
+    def register(self, widget):
+        self.widgets.append(widget)
 
-def text_width(string):
-    string_no_cmds = re.sub('\^[^\(]*\([^\)]*\)', '', string)
-    return int(cmd(['textwidth', font, string_no_cmds]))
+    def format(self, text):
+        output = str()
+        for piece in re.split('(\<[^\>]+\>)', text):
+            match = re.match('\<([^\>]+)\>', piece)
+            if match:
+                style_name = match.group(1)
 
-
-herbst_thread = Thread(target=herbst_events)
-herbst_thread.daemon = True
-status_thread = Thread(target=status_events)
-status_thread.daemon = True
-
-herbst_thread.start()
-status_thread.start()
-
-winID_re = re.compile('0x[0-9a-fA-F]+', re.MULTILINE)
-
-with Popen(['dzen2'] + dzen2_opts, stdin=PIPE, stdout=PIPE) as dzen2:
-    tag_statuses = load_tags()
-    windows = load_windows()
-    status = None
-
-    while True:
-        event = events.get()
-
-        print(event['name'])
-
-        tag_statuses = load_tags() # for alerts
-
-        if event['name'] == 'window_title_changed':
-            windows = load_windows()
-        elif event['name'] == 'status_changed':
-            status = event['status']
-            windows = load_windows()
-
-        tags = []
-
-        # tags and windows 
-
-        for tag in tag_statuses:
-            tag_status = tag[0:1]
-            name = tag[1:]
-
-            layout = hc(['dump', name])
-            
-            apps = set()
-
-            for winID in re.findall(winID_re, layout):
                 try:
-                    win = windows[winID]
-
-                    app_name = None
-                    if win['class'] == 'Termite':
-                        pieces = win['title'].replace('\"', '').split(' ')
-
-                        for piece in pieces:
-                            if re.match('^\w+$', piece):
-                                app_name = piece.lower().strip()
-
-                                # skip 'sudo'
-                                if app_name == 'sudo':
-                                    continue
-
-                                break
-
-                        # get edited file name (requires 'set title')
-                        if pieces[-1] == 'VIM':
-                            match = re.match('^([^\(]*) \(.*\) - VIM$', win['title'].replace('\"', ''))
-                            if match:
-                                app_name = '[{}]'.format(match.group(1))
-
-                    else:
-                        app_name = windows[winID]['class'].lower().strip()
-
-                    if app_name:
-                        apps.add(app_name)
-
+                    style = self.styles[style_name]
+                    output = output + '^fg({})^bg({})'.format(style['fg'], style['bg'])
                 except KeyError:
-                    print('Missing window (ID={})'.format(winID))
+                    sys.stderr.write('Unknown style: {}\n'.format(style_name))
+            else:
+                output += piece
 
-            tags.append('{} {}{}{} {}'.format(
-                colors(fg_selected, bg_selected) if tag_status == '#'
-                    else colors(fg_normal, bg_normal) if tag_status == ':'
-                    else colors(fg_urgent, bg_urgent) if tag_status == '!'
-                    else colors(fg_fade, bg_fade),
-                name,
-                ':' if len(apps) else '',
-                '+'.join(sorted(apps)),
-                colors(fg_normal, bg_normal)
-            ))
+        return output
 
-        padding = panel_width - text_width(status)
-        dzen2_src = '{}^pa({}){}\n'.format(''.join(tags), padding, status).encode()
+    def render(self):
+        total_width = 0
+        num_stretchers = 0
+        outputs = []
+        for widget in self.widgets:
+            output = widget.render()
+            total_width += widget.measure_width(font)
+            outputs.append(self.format(output))
 
-        dzen2.stdin.write(dzen2_src)
-        dzen2.stdin.flush()
+            if isinstance(widget, StretcherWidget):
+                num_stretchers += 1
+
+        dzen_input = ''
+        for widget in self.widgets:
+            dzen_input += outputs.pop(0)
+            if isinstance(widget, StretcherWidget):
+                dzen_input += "^p({})".format((1920 - total_width) / num_stretchers)
+
+        assert not outputs
+        dzen_input += '\n'
+
+        self.dzen2.stdin.write(dzen_input.encode())
+        self.dzen2.stdin.flush()
+
+    def start(self):
+        self.dzen2 = Popen(['dzen2'] + dzen2_opts, stdin=PIPE, stdout=PIPE)
+        
+        for widget in self.widgets:
+            widget.start()
+
+        while True:
+            self.invalid.wait()
+            self.invalid.clear()
+            self.render()
