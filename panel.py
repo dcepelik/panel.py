@@ -91,8 +91,8 @@ def status_events():
             now.month,
             now.year,
             colors(fg_normal, bg_normal),
-            now.hour,
-            now.minute
+            '{:02d}'.format(now.hour),
+            '{:02d}'.format(now.minute)
         ))
 
         events.put({
