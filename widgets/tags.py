@@ -46,6 +46,10 @@ class TagsWidget(Widget):
             tag_apps = set()
 
             for window in filter(lambda w: w['tag'] == tag['name'], self.windows.values()):
+                if not 'title' in window:
+                    sys.stderr.write('No title for this window, why?\n')
+                    window['title'] = ''
+
                 app_name = None
                 if window['class'] == 'Termite':
                     pieces = window['title'].split(' ')
