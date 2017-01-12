@@ -14,6 +14,7 @@ class Widget:
         self.invalid = False
         self.cache = None
         self.cache_width = 0
+        self.extra_width = 0
         self.cache_lock = Lock()
 
     def start(self):
@@ -26,7 +27,7 @@ class Widget:
         with self.cache_lock:
             if self.invalid:
                 self.cache = self.do_render()
-                text_no_markup = re.sub('\<[^\>]+\>', '', self.cache)
+                text_no_markup = re.sub('\<[^\>]+\>|\^[^\(]*\([^\)]*\)', '', self.cache)
                 self.cache_width = int(cmd('textwidth', font, text_no_markup))
 
                 self.invalid = False
@@ -37,7 +38,7 @@ class Widget:
         return str()
 
     def get_rendered_width(self):
-        return self.cache_width
+        return self.cache_width + self.extra_width
 
     def invalidate(self):
         with self.cache_lock:

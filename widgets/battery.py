@@ -9,6 +9,29 @@ class BatteryWidget(SimpleWidget):
         self.fmt = fmt
 
     def do_render(self):
-        batteries = [ dict(zip(['status', 'percent', 'time'], re.split('[,:]? ', line)[2:] + [None]))
-            for line in shell_cmd('acpi -b').split('\n') ]
-        return self.fmt.format(b=batteries)
+        icon_w = 18
+        icon_h = 9
+
+        batts = []
+        for line in shell_cmd('acpi -b').splitlines():
+            batid, status, percent, time = (re.split('[,:]? ', line) + [None])[1:5]
+
+            if '[icon]' in self.fmt:
+                full = int(20 * (float(percent.replace('%', '')) / 100.0))
+                icon = '^r(2x5)^ro({icon_w}x{icon_h})^p(-{icon_w})^r({full:d}x{icon_h})^p({empty:d})'.format(
+                    icon_w=icon_w,
+                    icon_h=icon_h,
+                    full=full,
+                    empty=(icon_w - full),
+                )
+
+                self.extra_width = 3 + icon_w
+                
+            batts.append({
+                'status': status,
+                'percent': percent,
+                'time': time,
+                'icon': icon
+            })
+
+        return self.fmt.format(b=batts)

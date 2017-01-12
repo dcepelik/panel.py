@@ -13,11 +13,11 @@ from panel import Panel
 panel = Panel()
 
 stretcher = StretcherWidget(panel)
-spacer = SpacerWidget(panel, 15)
+spacer = SpacerWidget(panel, 20)
 tags = TagsWidget(panel)
 clock = ClockWidget(panel, '<normal>{t.day}<inactive>.{t.month}.{t.year} <normal>{t.hour:02d}:{t.minute:02d}')
 mem = MemoryWidget(panel, '<normal>{used} <inactive>({available})')
-battery = BatteryWidget(panel, '<normal>{b[0][percent]} <inactive>({b[0][time]})')
+battery = BatteryWidget(panel, '<inactive>{b[0][icon]} <normal>{b[0][percent]} <inactive>({b[0][time]})')
 hello_world = TextWidget(panel, "<inactive>This is a <normal>very cocky<inactive> panel.py")
 mpc = MpcWidget(panel, "<normal>%title%<inactive> (%artist%)")
 
