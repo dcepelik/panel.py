@@ -104,7 +104,7 @@ class TagsWidget(Widget):
             for event in hc.stdout:
                 ev_type, ev_arg = (event.decode().split('\t') + [None])[0:2]
 
-                if ev_type == 'tag_flags' or ev_type == 'focus_changed':
+                if ev_type == 'tag_flags' or (ev_type == 'focus_changed' and ev_arg != '0x0'):
                     continue
 
                 with self.lock:
