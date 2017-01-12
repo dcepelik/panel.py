@@ -67,7 +67,3 @@ class SimpleWidget(Widget):
         while True:
             self.invalidate()
             sleep(self.interval)
-
-geom_x, geom_y, geom_width, geom_height = map(int, hc('monitor_rect', '0').split(' '))
-panel_height = 16
-panel_width = geom_width

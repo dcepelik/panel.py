@@ -86,7 +86,12 @@ class Panel:
         self.dzen2.stdin.flush()
 
     def start(self):
+        geom_x, geom_y, geom_width, geom_height = map(int, hc('monitor_rect', '0').split(' '))
+        self.height = 16
+        self.width = geom_width
         self.dzen2 = Popen(['dzen2'] + dzen2_opts, stdin=PIPE, stdout=PIPE)
+
+        hc('pad', '0', str(self.height))
         
         for widget in self.widgets:
             widget.start()

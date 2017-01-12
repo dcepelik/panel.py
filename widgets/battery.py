@@ -17,7 +17,7 @@ class BatteryWidget(SimpleWidget):
             batid, status, percent, time = (re.split('[,:]? ', line) + [None])[1:5]
 
             if '[icon]' in self.fmt:
-                full = int(20 * (float(percent.replace('%', '')) / 100.0))
+                full = int(icon_w * (float(percent.replace('%', '')) / 100.0))
                 icon = '^r(2x5)^ro({icon_w}x{icon_h})^p(-{icon_w})^r({full:d}x{icon_h})^p({empty:d})'.format(
                     icon_w=icon_w,
                     icon_h=icon_h,
