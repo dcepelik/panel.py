@@ -53,7 +53,7 @@ class TagsWidget(Widget):
                     if pieces[-1] == 'VIM' or pieces[-1] == 'NVIM':
                         match = re.match('^([^\(]*) \(.*\) - N?VIM$', window['title'])
                         if match:
-                            app_name = '[{}]'.format(match.group(1))
+                            app_name = '[{}]'.format(re.sub(' [+=]?$', '', match.group(1)))
 
                 else:
                     app_name = window['class'].strip().lower()
