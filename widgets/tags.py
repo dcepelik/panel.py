@@ -3,6 +3,7 @@ from threading import Lock
 from subprocess import Popen, PIPE
 from util import hc, colors
 import re
+import sys
 
 fg_normal = '#efefef'
 fg_selected = '#000000'
