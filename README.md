@@ -35,6 +35,7 @@ Comes with the following widgets (much more planned):
   * Clock (`ClockWidget`)
   * Memory usage (`MemoryWidget`)
   * Battery status (`BatteryWidget`, supports several batteries)
+  * MPC widget (`MpcWidget`, displays songs played by MPD)
   * Herbstluft tags (`TagsWidget`)
   * Helpers to position things (`SpacerWidget` and `StretcherWidget`)
 
