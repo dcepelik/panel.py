@@ -13,6 +13,7 @@ class Widget:
         self.name = name
         self.invalid = False
         self.cache = None
+        self.cache_width = 0
         self.cache_lock = Lock()
 
     def start(self):
@@ -21,10 +22,13 @@ class Widget:
         self.thread.daemon = True
         self.thread.start()
 
-    def render(self):
+    def render(self, font):
         with self.cache_lock:
             if self.invalid:
                 self.cache = self.do_render()
+                text_no_markup = re.sub('\<[^\>]+\>', '', self.cache)
+                self.cache_width = int(cmd('textwidth', font, text_no_markup))
+
                 self.invalid = False
 
         return self.cache
@@ -32,10 +36,8 @@ class Widget:
     def do_render(self):
         return str()
 
-    def measure_width(self, font):
-        text_no_markup = re.sub('\<[^\>]+\>', '', self.render())
-        text_no_markup = re.sub('\^[^\(]*\([^\)]*\)', '', text_no_markup)
-        return int(cmd('textwidth', font, text_no_markup))
+    def get_rendered_width(self):
+        return self.cache_width
 
     def invalidate(self):
         with self.cache_lock:
@@ -55,7 +57,7 @@ class StaticWidget(Widget):
 
 class SimpleWidget(Widget):
     
-    def __init__(self, panel, name, interval, cache = True):
+    def __init__(self, panel, name, interval):
         super().__init__(panel, name)
         self.interval = interval
         self.name = name

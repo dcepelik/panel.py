@@ -6,5 +6,5 @@ class TextWidget(StaticWidget):
         super().__init__(panel, "text")
         self.text = text
 
-    def render(self):
+    def do_render(self):
         return self.text

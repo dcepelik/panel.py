@@ -6,9 +6,8 @@ class SpacerWidget(StaticWidget):
         super().__init__(panel, "spacer")
         self.width = width;
 
-    def render(self):
+    def render(self, font):
         return "^p({})".format(self.width)
 
-
-    def measure_width(self, font):
+    def get_rendered_width(self):
         return self.width

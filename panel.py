@@ -66,8 +66,8 @@ class Panel:
         num_stretchers = 0
         outputs = []
         for widget in self.widgets:
-            output = widget.render()
-            total_width += widget.measure_width(font)
+            output = widget.render(font)
+            total_width += widget.get_rendered_width()
             outputs.append(self.format(output))
 
             if isinstance(widget, StretcherWidget):

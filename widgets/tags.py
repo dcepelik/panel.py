@@ -5,16 +5,6 @@ from util import hc, colors
 import re
 import sys
 
-fg_normal = '#efefef'
-fg_selected = '#000000'
-fg_fade = '#888888'
-fg_urgent = fg_selected
-
-bg_normal = '#000000'
-bg_selected = hc('get', 'window_border_active_color')
-bg_fade = bg_normal
-bg_urgent = '#FF0657'
-
 class TagsWidget(Widget): 
     def __init__(self, panel):
         super().__init__(panel, "tags")
@@ -52,7 +42,7 @@ class TagsWidget(Widget):
                     window['title'] = ''
 
                 app_name = None
-                if window['class'] == 'Termite':
+                if window['class'].lower() == 'termite':
                     pieces = window['title'].split(' ')
 
                     for word in filter(lambda p: re.match("^\w+$", p), pieces):
@@ -113,6 +103,9 @@ class TagsWidget(Widget):
         with Popen(['herbstclient', '-i'], stdout=PIPE) as hc:
             for event in hc.stdout:
                 ev_type, ev_arg = (event.decode().split('\t') + [None])[0:2]
+
+                if ev_type == 'tag_flags' or ev_type == 'focus_changed':
+                    continue
 
                 with self.lock:
                     if ev_type == 'window_title_changed':
