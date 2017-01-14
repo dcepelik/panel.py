@@ -6,7 +6,6 @@ import sys
 import re
 
 font = "-*-Bitstream Vera Sans Mono-*-*-*-*-11-*-*-*-*-*-*-*"                                        
-dzen2_opts = [ '-fn', font, '-ta', 'l' ]
 
 class Panel:
     
@@ -18,25 +17,27 @@ class Panel:
     def load_styles(self):
         self.styles = {
             'normal': {
-                'fg': '#efefef',
+                'fg': '#FFFFFF',
                 'bg': '#000000',
             },
 
             'active': {
                 'fg': '#000000',
-                'bg': hc('get', 'window_border_active_color'),
+                'bg': '#FFFFFF',
             },
 
             'inactive': {
-                'fg': '#888888',
+                'fg': '#bbbbbb',
                 'bg': '#000000',
             },
 
             'urgent': {
-                'fg': '#000000',
-                'fg': '#ff0657',
+                'bg': '#FF0000',
+                'fg': '#FFFFFF',
             }
         }
+
+        self.dzen2_opts = [ '-fn', font, '-ta', 'l', '-bg', self.styles['normal']['bg'] ]
 
     def invalidate(self, widget):
         self.invalid.set()
@@ -89,7 +90,7 @@ class Panel:
         geom_x, geom_y, geom_width, geom_height = map(int, hc('monitor_rect', '0').split(' '))
         self.height = 16
         self.width = geom_width
-        self.dzen2 = Popen(['dzen2'] + dzen2_opts, stdin=PIPE, stdout=PIPE)
+        self.dzen2 = Popen(['dzen2'] + self.dzen2_opts, stdin=PIPE, stdout=PIPE)
 
         hc('pad', '0', str(self.height))
         

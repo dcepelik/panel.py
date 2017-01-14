@@ -8,6 +8,7 @@ from widgets.text import TextWidget
 from widgets.battery import BatteryWidget
 from widgets.clock import ClockWidget
 from widgets.mpc import MpcWidget
+from widgets.notmuch import NotmuchWidget
 from panel import Panel
 
 panel = Panel()
@@ -20,12 +21,15 @@ mem = MemoryWidget(panel, '<normal>{used} <inactive>({available})')
 battery = BatteryWidget(panel, '<inactive>{b[0][icon]} <normal>{b[0][percent]} <inactive>({b[0][time]})')
 hello_world = TextWidget(panel, "<inactive>This is a <normal>very cocky<inactive> panel.py")
 mpc = MpcWidget(panel, "<normal>%title%<inactive> (%artist%)")
+notmuch = NotmuchWidget(panel, "<normal>{}<inactive> unread", "tag:inbox AND tag:unread AND NOT tag:killed")
 
 panel.register(tags)
 panel.register(stretcher)
 panel.register(hello_world)
 panel.register(stretcher)
 panel.register(mpc)
+panel.register(spacer)
+panel.register(notmuch)
 panel.register(spacer)
 panel.register(mem)
 panel.register(spacer)

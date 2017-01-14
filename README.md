@@ -36,6 +36,7 @@ Comes with the following widgets (much more planned):
   * Memory usage (`MemoryWidget`)
   * Battery status (`BatteryWidget`, supports several batteries)
   * MPC widget (`MpcWidget`, displays songs played by MPD)
+  * notmuch widget (`NotmuchWidget`, displays number of e-mails matching certain criteria)
   * Herbstluft tags (`TagsWidget`)
   * Helpers to position things (`SpacerWidget` and `StretcherWidget`)
 
