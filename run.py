@@ -9,6 +9,7 @@ from widgets.battery import BatteryWidget
 from widgets.clock import ClockWidget
 from widgets.mpc import MpcWidget
 from widgets.notmuch import NotmuchWidget
+from widgets.title import TitleWidget
 from panel import Panel
 
 panel = Panel()
@@ -22,10 +23,11 @@ battery = BatteryWidget(panel, '<inactive>{b[0][icon]} <normal>{b[0][percent]} <
 hello_world = TextWidget(panel, "<inactive>This is a <normal>very cocky<inactive> panel.py")
 mpc = MpcWidget(panel, "<normal>%title%<inactive> (%artist%)")
 notmuch = NotmuchWidget(panel, "<normal>{}<inactive> unread", "tag:inbox AND tag:unread AND NOT tag:killed")
+title = TitleWidget(panel)
 
 panel.register(tags)
 panel.register(stretcher)
-panel.register(hello_world)
+panel.register(title)
 panel.register(stretcher)
 panel.register(mpc)
 panel.register(spacer)

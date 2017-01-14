@@ -4,7 +4,7 @@ from util import cmd
 class NotmuchWidget(SimpleWidget):
 
     def __init__(self, panel, fmt, query, interval=3):
-        super().__init__(panel, fmt, interval)
+        super().__init__(panel, "notmuch", interval)
         self.fmt = fmt
         self.query = query
 

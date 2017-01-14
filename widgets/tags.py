@@ -6,6 +6,7 @@ import re
 import sys
 
 class TagsWidget(Widget): 
+
     def __init__(self, panel):
         super().__init__(panel, "tags")
         self.lock = Lock()
