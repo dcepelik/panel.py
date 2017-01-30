@@ -22,7 +22,7 @@ mem = MemoryWidget(panel, '<normal>{used} <inactive>({available})')
 battery = BatteryWidget(panel, '<inactive>{b[0][icon]} <normal>{b[0][percent]} <inactive>({b[0][time]})')
 hello_world = TextWidget(panel, "<inactive>This is a <normal>very cocky<inactive> panel.py")
 mpc = MpcWidget(panel, "<normal>%title%<inactive> (%artist%)")
-notmuch = NotmuchWidget(panel, "<normal>{}<inactive> unread", "tag:inbox AND tag:unread AND NOT tag:killed")
+notmuch = NotmuchWidget(panel, "<urgent> {} unread <normal>", "tag:inbox AND tag:unread AND NOT tag:killed")
 title = TitleWidget(panel)
 
 panel.register(tags)
