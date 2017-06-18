@@ -32,12 +32,16 @@ class Panel:
             },
 
             'urgent': {
-                'bg': '#FF0000',
+                'bg': '#7B0000',
                 'fg': '#FFFFFF',
             }
         }
 
-        self.dzen2_opts = [ '-fn', font, '-ta', 'l', '-bg', self.styles['normal']['bg'] ]
+        self.dzen2_opts = [
+            '-fn', font,
+            '-ta', 'l',
+            '-bg', self.styles['normal']['bg']
+        ]
 
     def invalidate(self, widget):
         self.invalid.set()
@@ -78,7 +82,7 @@ class Panel:
         for widget in self.widgets:
             dzen_input += outputs.pop(0)
             if isinstance(widget, StretcherWidget):
-                dzen_input += "^p({})".format((1920 - total_width) / num_stretchers)
+                dzen_input += "^p({})".format((self.width - total_width) / num_stretchers)
 
         assert not outputs
         dzen_input += '\n'
@@ -87,12 +91,16 @@ class Panel:
         self.dzen2.stdin.flush()
 
     def start(self):
-        geom_x, geom_y, geom_width, geom_height = map(int, hc('monitor_rect', '0').split(' '))
+        monitor_no = sys.argv[1]
+        geom_x, geom_y, geom_width, geom_height = map(int, hc('monitor_rect', monitor_no).split(' '))
         self.height = 16
         self.width = geom_width
-        self.dzen2 = Popen(['dzen2'] + self.dzen2_opts, stdin=PIPE, stdout=PIPE)
+        self.dzen2 = Popen(['dzen2'] + self.dzen2_opts + [
+            '-tw', str(self.width),
+            '-x', str(geom_x)
+        ], stdin=PIPE, stdout=PIPE)
 
-        hc('pad', '0', str(self.height))
+        hc('pad', str(monitor_no), str(self.height))
         
         for widget in self.widgets:
             widget.start()

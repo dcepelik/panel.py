@@ -1,0 +1,3 @@
+Support for machine name (ssh sessions)
+Fix tags widget bugs (not removing app name when client closed)
+Multiple batteries when bluetooth keyboard is connected?

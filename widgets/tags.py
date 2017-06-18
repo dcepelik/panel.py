@@ -86,7 +86,8 @@ class TagsWidget(Widget):
                 '#': 'active',
                 ':': 'normal',
                 '.': 'inactive',
-                '!': 'urgent'
+                '!': 'urgent',
+                '-': 'normal',
             }
         
             tag_names.append('<{}> {}{}{} <normal>'.format(
@@ -109,12 +110,17 @@ class TagsWidget(Widget):
                     continue
 
                 with self.lock:
-                    if ev_type == 'window_title_changed':
-                        # optimization candidate: only reload the window whose title changed
-                        self.load_windows()
-                    elif ev_type == 'urgent' or ev_type == 'tag_changed' or ev_type == 'tag_flags':
-                        self.refresh_tags()
-                    elif ev_type == 'focus_changed':
-                        self.load_windows()
+                    self.load_windows()
+                    self.refresh_tags()
+
+                    #if ev_type == 'window_title_changed':
+                    #    # optimization candidate: only reload the window whose title changed
+                    #    self.load_windows()
+                    #    self.refresh_tags()
+                    #elif ev_type == 'urgent' or ev_type == 'tag_changed' or ev_type == 'tag_flags':
+                    #    self.refresh_tags()
+                    #elif ev_type == 'focus_changed':
+                    #    self.load_windows()
+                    #    self.refresh_tags()
 
                 self.invalidate()

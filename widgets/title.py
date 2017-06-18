@@ -22,9 +22,9 @@ class TitleWidget(Widget):
 
                 if ev_type == 'focus_changed':
                     self.cur_winid = ev_arg1
-                    self.cur_title = unidecode(ev_arg2)
+                    self.cur_title = unidecode(str(ev_arg2))
                 elif ev_type == 'window_title_changed' and ev_arg1 == self.cur_winid:
-                    self.cur_title = unidecode(ev_arg2)
+                    self.cur_title = unidecode(str(ev_arg2))
                 else:
                     continue
 

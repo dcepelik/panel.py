@@ -13,7 +13,7 @@ class BatteryWidget(SimpleWidget):
         icon_h = 9
 
         batts = []
-        for line in shell_cmd('acpi -b').splitlines():
+        for line in shell_cmd('acpi -b | grep -v unavailable').splitlines():
             batid, status, percent, time = (re.split('[,:]? ', line) + [None])[1:5]
 
             if '[icon]' in self.fmt:
@@ -30,7 +30,7 @@ class BatteryWidget(SimpleWidget):
             batts.append({
                 'status': status,
                 'percent': percent,
-                'time': time,
+                'time': time or '-',
                 'icon': icon
             })
 
