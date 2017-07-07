@@ -59,8 +59,13 @@ class TagsWidget(Widget):
                 else:
                     app_name = window['class'].strip().lower()
 
-                if app_name:
-                    tag_apps.add(app_name)
+                    if app_name:
+                        if app_name == 'zathura':
+                            match = re.search("[^/]+$", window['title'].strip())
+                            if match:
+                                tag_apps.add("[" + match.group(0) + "]")
+                        else:
+                            tag_apps.add(app_name)
 
             tag['dynamic_name'] = '+'.join(sorted(tag_apps))
 

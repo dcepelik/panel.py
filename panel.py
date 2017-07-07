@@ -5,7 +5,7 @@ from util import hc
 import sys
 import re
 
-font = "-*-Bitstream Vera Sans Mono-*-*-*-*-11-*-*-*-*-*-*-*"                                        
+font = "-*-Bitstream Vera Sans Mono-*-*-*-*-9-*-*-*-*-*-*-*"                                        
 
 class Panel:
     
@@ -93,7 +93,7 @@ class Panel:
     def start(self):
         monitor_no = sys.argv[1]
         geom_x, geom_y, geom_width, geom_height = map(int, hc('monitor_rect', monitor_no).split(' '))
-        self.height = 16
+        self.height = 14
         self.width = geom_width
         self.dzen2 = Popen(['dzen2'] + self.dzen2_opts + [
             '-tw', str(self.width),
