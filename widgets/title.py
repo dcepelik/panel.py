@@ -18,12 +18,12 @@ class TitleWidget(Widget):
     def loop(self):
         with Popen(['herbstclient', '-i'], stdout=PIPE) as hc:
             for event in hc.stdout:
-                ev_type, ev_arg1, ev_arg2 = (event.decode().strip().split('\t') + [None, None])[0:3]
+                ev_type, ev_arg1, ev_arg2 = (event.decode().strip().split('\t') + ['', ''])[0:3]
 
                 if ev_type == 'focus_changed':
                     self.cur_winid = ev_arg1
                     self.cur_title = unidecode(str(ev_arg2))
-                elif ev_type == 'window_title_changed' and ev_arg1 == self.cur_winid:
+                elif ev_type == 'window_title_changed' and (ev_arg1 == self.cur_winid or ev_arg1 == None):
                     self.cur_title = unidecode(str(ev_arg2))
                 else:
                     continue
