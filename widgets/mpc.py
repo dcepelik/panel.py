@@ -12,6 +12,8 @@ class MpcWidget(Widget):
     def do_render(self):
         return self.current_song
 
+    # On first render, don't wait for an MPC event to occur.
+    # On subsequent renders, use --wait instead of polling.
     def loop(self):
         while True:
             self.current_song = shell_cmd('mpc -f "{}" {} current'.format(self.fmt, '--wait' if not self.first else ''))

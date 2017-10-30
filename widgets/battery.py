@@ -22,6 +22,7 @@ class BatteryWidget(SimpleWidget):
                     icon_w=icon_w,
                     icon_h=icon_h,
                     full=full,
+                    status=status,
                     empty=(icon_w - full),
                 )
 

@@ -98,3 +98,8 @@ This is a new thing, so:
 	<img alt="panel.py's tags" src="tags.png" />
 	<img alt="panel.py's status text (customizable in code)" src="status.png" />
 </p>
+
+## TODO
+
+  * `SIGUSR1` should result in re-rendering of the panel, so that more polling
+    can be removed.
